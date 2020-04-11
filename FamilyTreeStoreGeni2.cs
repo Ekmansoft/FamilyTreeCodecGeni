@@ -31,6 +31,7 @@ namespace FamilyTreeCodecGeni
 
     private String sourceFileName;
     private const int CACHE_CLEAR_DELAY = 3600 * 24 * 7; // one week
+    private const int GeniWebRequestTimeout = 60000;
     private FamilyTimer authenticationTimer;
     private GeniAccessStats stats;
     private string homePerson;
@@ -909,7 +910,8 @@ namespace FamilyTreeCodecGeni
           webRequestGetUrl = WebRequest.Create(sURL);
           webRequestGetUrl.Headers.Add("Authorization", String.Format("Bearer {0}", Uri.EscapeDataString(appAuthentication.GetAccessToken())));
           webRequestGetUrl.Headers.Add("Accept-Encoding", "gzip,deflate");
-          trace.TraceInformation(requestDescription + " = " + sURL + " " + DateTime.Now);
+          webRequestGetUrl.Timeout = GeniWebRequestTimeout;
+          trace.TraceInformation(requestDescription + " = " + sURL + " " + DateTime.Now + " timeout " + webRequestGetUrl.Timeout);
 
           HttpWebResponse response = (HttpWebResponse)webRequestGetUrl.GetResponse();
 
@@ -1442,7 +1444,7 @@ namespace FamilyTreeCodecGeni
           }
           if (family.GetXrefName() != "")
           {
-            trace.TraceInformation("GetFamily(" + familyXrefName + ") done " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            trace.TraceInformation("GetFamily(" + familyXrefName + ") done " + (DateTime.Now - startTime).ToString("HH:mm:ss"));
 
             cache.AddFamily(family);
 
@@ -1468,21 +1470,21 @@ namespace FamilyTreeCodecGeni
           }
           else
           {
-            trace.TraceEvent(TraceEventType.Error, 0, "GetFamily() FAILURE  (no xref returned) no data in result:" + sLine);
+            trace.TraceEvent(TraceEventType.Error, 0, "GetFamily() FAILURE  (no xref returned) no data in result:" + (DateTime.Now - startTime) + "s " + sLine);
           }
         }
         else
         {
-          trace.TraceEvent(TraceEventType.Error, 0, "GetFamily() FAILURE  (no data returned) no data in result:" + sLine);
+          trace.TraceEvent(TraceEventType.Error, 0, "GetFamily() FAILURE  (no data returned) no data in result:" + (DateTime.Now - startTime) + "s " + sLine);
         }
       }
       else
       {
-        trace.TraceEvent(TraceEventType.Error, 0, "GetFamily() FAILURE: no data returned from server:" + sLine);
+        trace.TraceEvent(TraceEventType.Error, 0, "GetFamily() FAILURE: no data returned from server:" + (DateTime.Now - startTime) + " s " + sLine);
       }
       //Console.ReadLine();
 
-      trace.TraceInformation("GetFamily(" + familyXrefName + ") = null" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+      trace.TraceInformation("GetFamily(" + familyXrefName + ") = null " + (DateTime.Now - startTime).ToString("yyyy-MM-dd HH:mm:ss"));
       stats.GetFamily.failure++;
       stats.GetFamily.Print();
 
@@ -1492,7 +1494,7 @@ namespace FamilyTreeCodecGeni
         if (deltaTime > stats.GetFamily.slowestFetch)
         {
           stats.GetFamily.slowestFetch = deltaTime;
-          trace.TraceInformation("GetFamily() slowest " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + deltaTime);
+          trace.TraceInformation("GetFamily() slowest " + (DateTime.Now - startTime).ToString("HH:mm:ss") + " " + deltaTime);
           stats.GetFamily.Print();
         }
       }
