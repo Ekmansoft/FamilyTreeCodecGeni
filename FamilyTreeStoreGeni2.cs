@@ -1177,7 +1177,7 @@ namespace FamilyTreeCodecGeni
             stats.GetIndividual.Print();
             trace.TraceData(TraceEventType.Warning, 0, "Other Exception: " + e.ToString());
           }
-          CheckAuthentication();
+          //CheckAuthentication();
           failure = true;
 
           Thread.Sleep(delayTime);
