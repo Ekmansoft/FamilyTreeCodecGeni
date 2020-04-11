@@ -1577,6 +1577,7 @@ namespace FamilyTreeCodecGeni
         {
           appAuthentication.UpdateAuthenticationData(authenticationResponse.access_token, authenticationResponse.refresh_token, Convert.ToInt32(authenticationResponse.expires_in), DateTime.Now, true);
           httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
+          httpClient.DefaultRequestHeaders.Add("accept-encoding", "gzip,deflate");
 
           //StartAuthenticationTimer();
           trace.TraceData(TraceEventType.Warning, 0, "AuthenticateApp() Done access_token:" + authenticationResponse.access_token + " expires_in:" + authenticationResponse.expires_in + " refresh:" + authenticationResponse.refresh_token + " " + (DateTime.Now - startTime) + "s");
