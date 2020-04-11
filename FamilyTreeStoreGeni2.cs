@@ -1158,6 +1158,12 @@ namespace FamilyTreeCodecGeni
           }
           //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
 
+          if (response == null)
+          {
+            trace.TraceData(TraceEventType.Information, 0, "response is null");
+
+          }
+
           string resultString = response.Headers.GetValues("Location").FirstOrDefault();
           trace.TraceData(TraceEventType.Information, 0, "Headers " + resultString);
 
@@ -1184,7 +1190,7 @@ namespace FamilyTreeCodecGeni
         {
           stats.GetIndividual.failureRetry++;
           trace.TraceData(TraceEventType.Warning, 0, requestDescription + " InvalidOperationException " + retryCount + "/" + numberOfRetries);
-          if (retryCount == numberOfRetries)
+          //if (retryCount == numberOfRetries)
           {
             trace.TraceData(TraceEventType.Warning, 0, "url:" + sURL);
             stats.GetIndividual.Print();
