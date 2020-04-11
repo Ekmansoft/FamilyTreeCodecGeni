@@ -885,7 +885,7 @@ namespace FamilyTreeCodecGeni
       CheckAuthentication();
     }
 
-    private string GetWebData(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
+    private string GetWebData1(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
     {
       string returnLine = null;
       bool failure = false;
@@ -907,7 +907,7 @@ namespace FamilyTreeCodecGeni
           }
 
           WebRequest webRequestGetUrl;
-          webRequestGetUrl = WebRequest.Create(sURL);
+          webRequestGetUrl = HttpWebRequest.Create(sURL);
           webRequestGetUrl.Headers.Add("Authorization", String.Format("Bearer {0}", Uri.EscapeDataString(appAuthentication.GetAccessToken())));
           webRequestGetUrl.Headers.Add("Accept-Encoding", "gzip,deflate");
           webRequestGetUrl.Timeout = GeniWebRequestTimeout;
@@ -1099,7 +1099,7 @@ namespace FamilyTreeCodecGeni
       }
     }
 
-    private string GetWebData2(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
+    private string GetWebData(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
     {
       return PostWebData(mainURL, null, requestDescription, numberOfRetries);
     }
