@@ -1161,11 +1161,19 @@ namespace FamilyTreeCodecGeni
           if (response == null)
           {
             trace.TraceData(TraceEventType.Information, 0, "response is null");
-
+          } 
+          else
+          {
+            if (response.Headers != null)
+            {
+              string resultString = response.Headers.GetValues("Location").FirstOrDefault();
+              trace.TraceData(TraceEventType.Information, 0, "Headers " + resultString);
+            } else
+            {
+              trace.TraceData(TraceEventType.Information, 0, "Headers is null" );
+            }
           }
 
-          string resultString = response.Headers.GetValues("Location").FirstOrDefault();
-          trace.TraceData(TraceEventType.Information, 0, "Headers " + resultString);
 
           if (ClassifyHttpResponse(response) == GeniWebResultType.OkTooFast)
           {
