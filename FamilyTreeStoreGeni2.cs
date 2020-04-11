@@ -41,6 +41,10 @@ namespace FamilyTreeCodecGeni
     private const int DefaultRetryTime = 2000;
     private static readonly HttpClient httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
 
+    public FamilyTreeCapabilityClass GetCapabilities()
+    {
+      return new FamilyTreeCapabilityClass { jsonSearch = false };
+    }
     protected virtual void Dispose(bool managed)
     {
       trace.TraceData(TraceEventType.Information, 0, "FamilyTreeStoreGeni2 dispose");
@@ -2190,8 +2194,9 @@ namespace FamilyTreeCodecGeni
         {
           trace.TraceData(TraceEventType.Error, 0, "Error: Requesed person " + xrefName + " not found!");
         }
+        UpdateCaches();
 
-        if(focusPerson == null)
+        if (focusPerson == null)
         {
           trace.TraceData(TraceEventType.Error, 0, "Focus person not found!" + xrefName);
           trace.TraceData(TraceEventType.Error, 0, "request!" + getPersonUrl);
@@ -2299,6 +2304,7 @@ namespace FamilyTreeCodecGeni
               sLine = GetWebData(searchPersonResult.next_page, null, "SearchIndividual()" + individualName + " page " + (searchPersonResult.page + 1), MaxRetryCount);
             }
           } while (sLine != null);
+          UpdateCaches();
         }
         else
         {
