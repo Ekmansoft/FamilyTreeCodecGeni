@@ -1444,7 +1444,7 @@ namespace FamilyTreeCodecGeni
           }
           if (family.GetXrefName() != "")
           {
-            trace.TraceInformation("GetFamily(" + familyXrefName + ") done " + (DateTime.Now - startTime).ToString("HH:mm:ss"));
+            trace.TraceInformation("GetFamily(" + familyXrefName + ") done " + (DateTime.Now - startTime).ToString());
 
             cache.AddFamily(family);
 
@@ -1484,7 +1484,7 @@ namespace FamilyTreeCodecGeni
       }
       //Console.ReadLine();
 
-      trace.TraceInformation("GetFamily(" + familyXrefName + ") = null " + (DateTime.Now - startTime).ToString("yyyy-MM-dd HH:mm:ss"));
+      trace.TraceInformation("GetFamily(" + familyXrefName + ") = null " + (DateTime.Now - startTime).ToString());
       stats.GetFamily.failure++;
       stats.GetFamily.Print();
 
@@ -1494,7 +1494,7 @@ namespace FamilyTreeCodecGeni
         if (deltaTime > stats.GetFamily.slowestFetch)
         {
           stats.GetFamily.slowestFetch = deltaTime;
-          trace.TraceInformation("GetFamily() slowest " + (DateTime.Now - startTime).ToString("HH:mm:ss") + " " + deltaTime);
+          trace.TraceInformation("GetFamily() slowest " + (DateTime.Now - startTime).ToString() + " " + deltaTime);
           stats.GetFamily.Print();
         }
       }
