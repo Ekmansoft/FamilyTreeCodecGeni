@@ -27,7 +27,7 @@ namespace FamilyTreeCodecGeni
   [DataContract]
   public class FamilyTreeStoreGeni2 : IFamilyTreeStoreBaseClass, IDisposable
   {
-    private static readonly TraceSource trace = new TraceSource("FamilyTreeStoreGeni2", SourceLevels.Information);
+    private static readonly TraceSource trace = new TraceSource("FamilyTreeStoreGeni2", SourceLevels.Warning);
 
     private String sourceFileName;
     private const int CACHE_CLEAR_DELAY = 3600 * 24 * 7; // one week
