@@ -69,19 +69,21 @@ namespace FamilyTreeCodecGeni
       GC.SuppressFinalize(this);
     }
 
-    private void CheckAuthentication()
+    private void CheckHeaderInit()
     {
-      //AuthenticateApp();
-
-      if(!headersAdded)
+      if (!headersAdded)
       {
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
         httpClient.DefaultRequestHeaders.Add("accept-encoding", "gzip,deflate");
         headersAdded = true;
         trace.TraceData(TraceEventType.Warning, 0, "Geni.com headers added:" + appAuthentication.GetAccessToken());
       }
+    }
 
 
+    private void CheckAuthentication()
+    {
+      //AuthenticateApp();
       trace.TraceData(TraceEventType.Warning, 0, "Geni.com authentication:" + appAuthentication.ToString());
 
       if (appAuthentication.IsValid())
@@ -1122,6 +1124,7 @@ namespace FamilyTreeCodecGeni
       //GeniWebResultType resultClass = GeniWebResultType.Ok;
       int delayTime = DefaultRetryTime;
 
+      CheckHeaderInit();
       do
       {
         string sURL = url;
@@ -1162,6 +1165,23 @@ namespace FamilyTreeCodecGeni
         {
           stats.GetIndividual.failureRetry++;
           trace.TraceData(TraceEventType.Information, 0, "Exception.Response.Headers: " + e.ToString());
+
+          Thread.Sleep(delayTime);
+
+          delayTime = delayTime * 2;
+        }
+        catch (InvalidOperationException e)
+        {
+          stats.GetIndividual.failureRetry++;
+          trace.TraceData(TraceEventType.Warning, 0, requestDescription + " InvalidOperationException " + retryCount + "/" + numberOfRetries);
+          if (retryCount == numberOfRetries)
+          {
+            trace.TraceData(TraceEventType.Warning, 0, "url:" + sURL);
+            stats.GetIndividual.Print();
+            trace.TraceData(TraceEventType.Warning, 0, "InvalidOperationException: " + e.ToString());
+          }
+          //CheckAuthentication();
+          failure = true;
 
           Thread.Sleep(delayTime);
 
