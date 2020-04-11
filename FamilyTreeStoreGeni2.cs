@@ -40,6 +40,7 @@ namespace FamilyTreeCodecGeni
     private const int MaxProfilesToSearch = 150;
     private const int MaxRetryCount = 5;
     private const int DefaultRetryTime = 2000;
+    private bool headersAdded = false;
     private static readonly HttpClient httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
 
     public FamilyTreeCapabilityClass GetCapabilities()
@@ -71,6 +72,15 @@ namespace FamilyTreeCodecGeni
     private void CheckAuthentication()
     {
       //AuthenticateApp();
+
+      if(!headersAdded)
+      {
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
+        httpClient.DefaultRequestHeaders.Add("accept-encoding", "gzip,deflate");
+        headersAdded = true;
+        trace.TraceData(TraceEventType.Warning, 0, "Geni.com headers added...");
+      }
+
 
       trace.TraceData(TraceEventType.Warning, 0, "Geni.com authentication:" + appAuthentication.ToString());
 
@@ -1577,7 +1587,6 @@ namespace FamilyTreeCodecGeni
         {
           appAuthentication.UpdateAuthenticationData(authenticationResponse.access_token, authenticationResponse.refresh_token, Convert.ToInt32(authenticationResponse.expires_in), DateTime.Now, true);
           httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
-          httpClient.DefaultRequestHeaders.Add("accept-encoding", "gzip,deflate");
 
           //StartAuthenticationTimer();
           trace.TraceData(TraceEventType.Warning, 0, "AuthenticateApp() Done access_token:" + authenticationResponse.access_token + " expires_in:" + authenticationResponse.expires_in + " refresh:" + authenticationResponse.refresh_token + " " + (DateTime.Now - startTime) + "s");
