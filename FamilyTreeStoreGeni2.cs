@@ -83,6 +83,7 @@ namespace FamilyTreeCodecGeni
 
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
         httpClient.DefaultRequestHeaders.Add("accept-encoding", "gzip,deflate");
+        httpClient.Timeout = new TimeSpan(0, 0, 0, 0, GeniWebRequestTimeout);
         headersAdded = true;
         trace.TraceData(TraceEventType.Warning, 0, "Geni.com headers added:" + appAuthentication.GetAccessToken());
       }
@@ -1192,6 +1193,7 @@ namespace FamilyTreeCodecGeni
             trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 10 s!");
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
             Thread.Sleep(10000);
+            trace.TraceData(TraceEventType.Warning, 0, "returning:" + Thread.CurrentThread.ToString());
           }
 
           response.EnsureSuccessStatusCode();
