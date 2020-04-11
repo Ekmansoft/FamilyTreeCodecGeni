@@ -78,7 +78,7 @@ namespace FamilyTreeCodecGeni
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
         httpClient.DefaultRequestHeaders.Add("accept-encoding", "gzip,deflate");
         headersAdded = true;
-        trace.TraceData(TraceEventType.Warning, 0, "Geni.com headers added...");
+        trace.TraceData(TraceEventType.Warning, 0, "Geni.com headers added:" + appAuthentication.GetAccessToken());
       }
 
 
@@ -1177,6 +1177,7 @@ namespace FamilyTreeCodecGeni
             stats.GetIndividual.Print();
             trace.TraceData(TraceEventType.Warning, 0, "Other Exception: " + e.ToString());
           }
+          CheckAuthentication();
           failure = true;
 
           Thread.Sleep(delayTime);
