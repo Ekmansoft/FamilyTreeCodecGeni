@@ -1166,8 +1166,18 @@ namespace FamilyTreeCodecGeni
           {
             if (response.Headers != null)
             {
-              string resultString = response.Headers.GetValues("Location").FirstOrDefault();
-              trace.TraceData(TraceEventType.Information, 0, "Headers " + resultString);
+              if (response.Headers.GetValues("Location") != null)
+              {
+                IEnumerator resultStrings = response.Headers.GetValues("Location").GetEnumerator();
+                while (resultStrings.MoveNext())
+                {
+                  trace.TraceData(TraceEventType.Information, 0, "Headers: " + resultStrings.Current);
+                }
+              } 
+              else
+              {
+                trace.TraceData(TraceEventType.Information, 0, "Headers is null-2");
+              }
             } else
             {
               trace.TraceData(TraceEventType.Information, 0, "Headers is null" );
