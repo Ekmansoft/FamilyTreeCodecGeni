@@ -1166,9 +1166,11 @@ namespace FamilyTreeCodecGeni
           {
             if (response.Headers != null)
             {
-              if (response.Headers.GetValues("Location") != null)
+              IEnumerable<string> headers;
+              if(response.Headers.TryGetValues("Location", out headers))
+              //if (response.Headers.GetValues("Location") != null)
               {
-                IEnumerator resultStrings = response.Headers.GetValues("Location").GetEnumerator();
+                IEnumerator resultStrings = headers.GetEnumerator();
                 while (resultStrings.MoveNext())
                 {
                   trace.TraceData(TraceEventType.Information, 0, "Headers: " + resultStrings.Current);
