@@ -1158,6 +1158,8 @@ namespace FamilyTreeCodecGeni
           }
           //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
 
+          string resultString = response.Headers.GetValues("Location").FirstOrDefault();
+          trace.TraceData(TraceEventType.Information, 0, "Headers " + resultString);
 
           if (ClassifyHttpResponse(response) == GeniWebResultType.OkTooFast)
           {
@@ -1327,7 +1329,7 @@ namespace FamilyTreeCodecGeni
     {
       if (response != null)
       {
-        IEnumerator<string> rateRemaining = response.Content.Headers.GetValues("X-API-Rate-Remaining").GetEnumerator();
+        IEnumerator<string> rateRemaining = response.Headers.GetValues("X-API-Rate-Remaining").GetEnumerator();
         if (rateRemaining.MoveNext())
         {
           if (Convert.ToInt32(rateRemaining.Current) < 5)
