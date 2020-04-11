@@ -40,9 +40,9 @@ namespace FamilyTreeCodecGeni
     private const int MaxProfilesToSearch = 150;
     private const int MaxRetryCount = 5;
     private const int DefaultRetryTime = 2000;
-    private bool headersAdded = false;
-    private HttpClient httpClient;
-    private HttpClientHandler clientHandler;
+    private static bool headersAdded = false;
+    private static HttpClient httpClient;
+    private static HttpClientHandler clientHandler;
 
     public FamilyTreeCapabilityClass GetCapabilities()
     {
