@@ -41,7 +41,8 @@ namespace FamilyTreeCodecGeni
     private const int MaxRetryCount = 5;
     private const int DefaultRetryTime = 2000;
     private bool headersAdded = false;
-    private static readonly HttpClient httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
+    private HttpClient httpClient;
+    private HttpClientHandler clientHandler;
 
     public FamilyTreeCapabilityClass GetCapabilities()
     {
@@ -73,6 +74,13 @@ namespace FamilyTreeCodecGeni
     {
       if (!headersAdded)
       {
+        clientHandler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
+        clientHandler.UseDefaultCredentials = false;
+        clientHandler.Credentials = CredentialCache.DefaultCredentials;
+        clientHandler.AllowAutoRedirect = true;
+
+        httpClient = new HttpClient(clientHandler);
+
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Uri.EscapeDataString(appAuthentication.GetAccessToken()));
         httpClient.DefaultRequestHeaders.Add("accept-encoding", "gzip,deflate");
         headersAdded = true;
