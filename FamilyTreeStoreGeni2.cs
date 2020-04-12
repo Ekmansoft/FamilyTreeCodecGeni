@@ -967,6 +967,7 @@ namespace FamilyTreeCodecGeni
             trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 10 s!");
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
             Thread.Sleep(10000);
+            failure = true;
           }
           else 
           {
