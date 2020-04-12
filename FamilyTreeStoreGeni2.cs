@@ -43,6 +43,7 @@ namespace FamilyTreeCodecGeni
     private static bool headersAdded = false;
     private static HttpClient httpClient;
     private static HttpClientHandler clientHandler;
+    private int httpRequestType = 1;
 
     public FamilyTreeCapabilityClass GetCapabilities()
     {
@@ -844,6 +845,7 @@ namespace FamilyTreeCodecGeni
       trace.TraceData(TraceEventType.Information, 0, "FamilyTreeStoreGeni2 created");
 
       this.appAuthentication = appAuthentication;
+      this.httpRequestType = 1;
 
       geniTreeSize = null;
 
@@ -1120,9 +1122,20 @@ namespace FamilyTreeCodecGeni
       }
     }
 
-    private string GetWebData(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
+    private string GetWebData2(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
     {
       return PostWebData(mainURL, null, requestDescription, numberOfRetries);
+    }
+    private string GetWebData(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
+    {
+      switch (httpRequestType)
+      {
+        case 1:
+          return GetWebData1(mainURL, secondaryURL, requestDescription, numberOfRetries);
+        case 2:
+        default:
+          return GetWebData2(mainURL, secondaryURL, requestDescription, numberOfRetries);
+      }
     }
 
     private string PostWebData(string url, string postData, string requestDescription, int numberOfRetries)
