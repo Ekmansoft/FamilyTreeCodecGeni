@@ -984,9 +984,10 @@ namespace FamilyTreeCodecGeni
           }
           else if (result == GeniWebResultType.OkTooFast)
           {
-            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 1 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + latestTooFastRate);
+            int tooFastDelayTime = 1000 * (7 - latestTooFastRate);
+            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 1 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + latestTooFastRate + " " + tooFastDelayTime);
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
-            Thread.Sleep(1000);
+            Thread.Sleep(tooFastDelayTime);
             if (returnLine == null)
             {
               failure = true;
@@ -995,9 +996,9 @@ namespace FamilyTreeCodecGeni
           }
           else if (result == GeniWebResultType.OkTooFast2)
           {
-            trace.TraceData(TraceEventType.Warning, 0, "Running too fast2...Breaking 8 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + latestTooFastRate);
+            trace.TraceData(TraceEventType.Warning, 0, "Running too fast2...Breaking 10 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + latestTooFastRate);
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
-            Thread.Sleep(8000);
+            Thread.Sleep(10000);
             if (returnLine == null)
             {
               failure = true;
