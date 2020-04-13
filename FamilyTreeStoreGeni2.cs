@@ -986,10 +986,14 @@ namespace FamilyTreeCodecGeni
           }
           else if (result == GeniWebResultType.OkTooFast)
           {
-            int tooFastDelayTime = 1000 * (7 - httpApiRateRemaining);
+            int tooFastDelayTime = 1000 * (9 - httpApiRateRemaining);
             trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + 
                webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + 
                httpApiRateRemaining + "/" + httpApiRateLimit  + "/" + httpApiRateWindow);
+            if (tooFastDelayTime < 500)
+            {
+              tooFastDelayTime = 500;
+            }
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
             Thread.Sleep(tooFastDelayTime);
             if (returnLine == null)
@@ -1414,7 +1418,7 @@ namespace FamilyTreeCodecGeni
             httpApiRateWindow = 0;
           }
 
-          if (httpApiRateRemaining < 9)
+          if (httpApiRateRemaining < 10)
           {
             return GeniWebResultType.OkTooFast;
           }
@@ -1435,7 +1439,7 @@ namespace FamilyTreeCodecGeni
         if (rateRemaining.MoveNext())
         {
           httpApiRateLimit = Convert.ToInt32(rateRemaining.Current);
-          if (httpApiRateLimit < 9)
+          if (httpApiRateLimit < 10)
           {
             rateRemaining.Dispose();
             return GeniWebResultType.OkTooFast;
