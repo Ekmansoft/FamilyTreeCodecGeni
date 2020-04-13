@@ -986,11 +986,13 @@ namespace FamilyTreeCodecGeni
           }
           else if (result == GeniWebResultType.OkTooFast)
           {
-            int tooFastDelayTime = 1000 * (httpApiRateLimit - httpApiRateRemaining);
-            if (tooFastDelayTime < 500)
+            int tooFastDelayTime = 1200;
+
+            if (httpApiRateRemaining < 3)
             {
-              tooFastDelayTime = 500;
+              tooFastDelayTime = 1000 * (httpApiRateLimit - httpApiRateRemaining);
             }
+
             trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + 
                webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + 
                httpApiRateRemaining + "/" + httpApiRateLimit  + "/" + httpApiRateWindow);
