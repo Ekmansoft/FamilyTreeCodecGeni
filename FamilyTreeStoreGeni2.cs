@@ -1376,7 +1376,7 @@ namespace FamilyTreeCodecGeni
       {
         if (response.Headers["X-API-Rate-Remaining"] != null)
         {
-          if (Convert.ToInt32(response.Headers["X-API-Rate-Remaining"]) == 0)
+          if (Convert.ToInt32(response.Headers["X-API-Rate-Remaining"]) < 2)
           {
             return GeniWebResultType.OkTooFast;
           }
@@ -1396,7 +1396,7 @@ namespace FamilyTreeCodecGeni
         IEnumerator<string> rateRemaining = response.Headers.GetValues("X-API-Rate-Remaining").GetEnumerator();
         if (rateRemaining.MoveNext())
         {
-          if (Convert.ToInt32(rateRemaining.Current) == 0)
+          if (Convert.ToInt32(rateRemaining.Current) < 2)
           {
             rateRemaining.Dispose();
             return GeniWebResultType.OkTooFast;
