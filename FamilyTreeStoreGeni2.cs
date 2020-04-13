@@ -58,7 +58,8 @@ namespace FamilyTreeCodecGeni
     private static HttpClient httpClient;
     private static HttpClientHandler clientHandler;
     private int httpRequestType = 1;
-    WebStats webStats;
+    private int latestTooFastRate;
+    private WebStats webStats;
 
     public FamilyTreeCapabilityClass GetCapabilities()
     {
@@ -983,7 +984,7 @@ namespace FamilyTreeCodecGeni
           }
           else if (result == GeniWebResultType.OkTooFast)
           {
-            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 1 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast);
+            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 1 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + latestTooFastRate);
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
             Thread.Sleep(1000);
             if (returnLine == null)
@@ -994,7 +995,7 @@ namespace FamilyTreeCodecGeni
           }
           else if (result == GeniWebResultType.OkTooFast2)
           {
-            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 8 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast);
+            trace.TraceData(TraceEventType.Warning, 0, "Running too fast2...Breaking 8 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + latestTooFastRate);
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
             Thread.Sleep(8000);
             if (returnLine == null)
@@ -1253,7 +1254,7 @@ namespace FamilyTreeCodecGeni
           }
           else if (resultClass == GeniWebResultType.OkTooFast2)
           {
-            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 8 s!");
+            trace.TraceData(TraceEventType.Warning, 0, "Running too fast2...Breaking 8 s!");
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
             Thread.Sleep(8000);
             if (returnLine == null)
@@ -1407,14 +1408,15 @@ namespace FamilyTreeCodecGeni
       {
         if (response.Headers["X-API-Rate-Remaining"] != null)
         {
-          int requestsLeft = Convert.ToInt32(response.Headers["X-API-Rate-Remaining"]);
-          if (requestsLeft < 5)
-          {
-            return GeniWebResultType.OkTooFast;
-          }
-          if (requestsLeft < 2)
+          latestTooFastRate = Convert.ToInt32(response.Headers["X-API-Rate-Remaining"]);
+
+          if (latestTooFastRate < 2)
           {
             return GeniWebResultType.OkTooFast2;
+          }
+          if (latestTooFastRate < 5)
+          {
+            return GeniWebResultType.OkTooFast;
           }
         }
       }
@@ -1432,16 +1434,16 @@ namespace FamilyTreeCodecGeni
         IEnumerator<string> rateRemaining = response.Headers.GetValues("X-API-Rate-Remaining").GetEnumerator();
         if (rateRemaining.MoveNext())
         {
-          int requestsLeft = Convert.ToInt32(rateRemaining.Current);
-          if (requestsLeft < 5)
-          {
-            rateRemaining.Dispose();
-            return GeniWebResultType.OkTooFast;
-          }
-          if (requestsLeft < 2)
+          latestTooFastRate = Convert.ToInt32(rateRemaining.Current);
+          if (latestTooFastRate < 2)
           {
             rateRemaining.Dispose();
             return GeniWebResultType.OkTooFast2;
+          }
+          if (latestTooFastRate < 5)
+          {
+            rateRemaining.Dispose();
+            return GeniWebResultType.OkTooFast;
           }
           rateRemaining.Dispose();
         }
