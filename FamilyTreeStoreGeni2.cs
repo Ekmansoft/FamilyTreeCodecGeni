@@ -986,7 +986,7 @@ namespace FamilyTreeCodecGeni
           }
           else if (result == GeniWebResultType.OkTooFast)
           {
-            int tooFastDelayTime = 1200;
+            int tooFastDelayTime = 900 + 100 * (httpApiRateLimit - httpApiRateRemaining);
 
             if (httpApiRateRemaining < 3)
             {
