@@ -25,6 +25,20 @@ using System.IO.Compression;
 namespace FamilyTreeCodecGeni
 {
   [DataContract]
+
+  class WebStats
+  {
+    public WebStats()
+    {
+      requests = 0;
+      successes = 0;
+      tooFast = 0;
+    }
+    public int requests;
+    public int successes;
+    public int tooFast;
+
+  }
   public class FamilyTreeStoreGeni2 : IFamilyTreeStoreBaseClass, IDisposable
   {
     private static readonly TraceSource trace = new TraceSource("FamilyTreeStoreGeni2", SourceLevels.Warning);
@@ -44,6 +58,7 @@ namespace FamilyTreeCodecGeni
     private static HttpClient httpClient;
     private static HttpClientHandler clientHandler;
     private int httpRequestType = 1;
+    WebStats webStats;
 
     public FamilyTreeCapabilityClass GetCapabilities()
     {
@@ -846,6 +861,7 @@ namespace FamilyTreeCodecGeni
 
       this.appAuthentication = appAuthentication;
       this.httpRequestType = 1;
+      this.webStats = new WebStats();
 
       geniTreeSize = null;
 
@@ -921,6 +937,7 @@ namespace FamilyTreeCodecGeni
         string sURL = mainURL;
         failure = false;
         CheckGeniAuthentication();
+        webStats.requests++;
 
         try
         {
@@ -961,13 +978,15 @@ namespace FamilyTreeCodecGeni
 
             returnLine = objReader.ReadToEnd();
             stream.Close();
+            webStats.successes++;
           }
           else if (result == GeniWebResultType.OkTooFast)
           {
-            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 10 s!");
+            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 10 s! " + webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast );
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
             Thread.Sleep(10000);
             failure = true;
+            webStats.tooFast++;
           }
           else 
           {
@@ -1208,6 +1227,7 @@ namespace FamilyTreeCodecGeni
             trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking 10 s!");
             trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
             Thread.Sleep(10000);
+            failure = true;
             trace.TraceData(TraceEventType.Warning, 0, "returning:" + Thread.CurrentThread.ToString());
           }
 
@@ -1220,6 +1240,7 @@ namespace FamilyTreeCodecGeni
           trace.TraceData(TraceEventType.Information, 0, "Exception.Response.Headers: " + e.ToString());
 
           Thread.Sleep(delayTime);
+          failure = true;
 
           delayTime = delayTime * 2;
         }
