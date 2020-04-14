@@ -927,6 +927,21 @@ namespace FamilyTreeCodecGeni
       CheckAuthentication();
     }
 
+    private int GetNextDelayTimeAtRateLimit()
+    {
+      int tooFastDelayTime = 0;
+
+      if (httpApiRateRemaining < 3)
+      {
+        tooFastDelayTime = 1000 * (httpApiRateLimit - httpApiRateRemaining);
+      }
+      else if (httpApiRateRemaining < 6)
+      {
+        tooFastDelayTime = 100 + 200 * (httpApiRateLimit - httpApiRateRemaining);
+      }
+      return tooFastDelayTime;
+    }
+
     private string GetWebData1(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
     {
       string returnLine = null;
@@ -986,18 +1001,17 @@ namespace FamilyTreeCodecGeni
           }
           else if (result == GeniWebResultType.OkTooFast)
           {
-            int tooFastDelayTime = 500 + 100 * (httpApiRateLimit - httpApiRateRemaining);
+            int tooFastDelayTime = GetNextDelayTimeAtRateLimit();
 
-            if (httpApiRateRemaining < 3)
+            if (tooFastDelayTime > 0)
             {
-              tooFastDelayTime = 1000 * (httpApiRateLimit - httpApiRateRemaining);
+              trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " +
+               webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " +
+               httpApiRateRemaining + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
+              trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
+              Thread.Sleep(tooFastDelayTime);
+              webStats.tooFast++;
             }
-
-            trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + 
-               webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " + 
-               httpApiRateRemaining + "/" + httpApiRateLimit  + "/" + httpApiRateWindow);
-            trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
-            Thread.Sleep(tooFastDelayTime);
             if (returnLine == null)
             {
               failure = true;
@@ -1006,7 +1020,6 @@ namespace FamilyTreeCodecGeni
             {
               webStats.successes++;
             }
-            webStats.tooFast++;
           }
           else
           {
