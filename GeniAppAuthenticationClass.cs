@@ -50,13 +50,13 @@ namespace FamilyTreeCodecGeni
 
     public bool UpdateAuthenticationData(string accessToken, string refreshToken, int expiresIn, DateTime authenticationTime, bool saveToDb = false)
     {
-      trace.TraceData(TraceEventType.Information, 0, "UpdateAuthenticationData: old access:" + ToString());
+      trace.TraceData(TraceEventType.Warning, 0, "UpdateAuthenticationData: old access:" + ToString());
       this.expiresIn = expiresIn;
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;
       receptionTime = authenticationTime;
       useCount = 0;
-      trace.TraceData(TraceEventType.Information, 0, "UpdateAuthenticationData: new access:" + ToString());
+      trace.TraceData(TraceEventType.Warning, 0, "UpdateAuthenticationData: new access:" + ToString());
       //this.response = response;
       forceReauthentication = false;
 
@@ -65,7 +65,7 @@ namespace FamilyTreeCodecGeni
         //FamilyDbContextClass.UpdateGeniAuthentication(userId, accessToken, refreshToken, expiresIn);
         tokenUpdateCallback?.Invoke(accessToken, refreshToken, expiresIn);
       }
-      trace.TraceData(TraceEventType.Information, 0, "Updated geni authentication!");
+      trace.TraceData(TraceEventType.Warning, 0, "Updated geni authentication!");
 
       return true;
     }
