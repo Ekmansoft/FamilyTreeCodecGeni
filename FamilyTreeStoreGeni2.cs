@@ -622,7 +622,7 @@ namespace FamilyTreeCodecGeni
           }
           resultClass = ClassifyErrorWebResponse(httpResponseStatus);
           failure = true;
-          trace.TraceData(TraceEventType.Warning, 0, "url:" + sURL + ":" + e.ToString());
+          //trace.TraceData(TraceEventType.Warning, 0, "url:" + sURL + ":" + e.ToString());
 
           if ((retryCount > 0) || (resultClass != GeniWebResultType.FailedRetrySimple))
           {
