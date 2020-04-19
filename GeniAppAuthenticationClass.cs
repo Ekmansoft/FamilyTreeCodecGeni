@@ -56,9 +56,9 @@ namespace FamilyTreeCodecGeni
       this.refreshToken = refreshToken;
       receptionTime = authenticationTime;
       useCount = 0;
+      forceReauthentication = false;
       trace.TraceData(TraceEventType.Warning, 0, "UpdateAuthenticationData: new access:" + ToString());
       //this.response = response;
-      forceReauthentication = false;
 
       if (saveToDb)
       {

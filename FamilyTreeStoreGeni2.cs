@@ -120,6 +120,7 @@ namespace FamilyTreeCodecGeni
       {
         trace.TraceData(TraceEventType.Warning, 0, "Geni.com authentication not ok !!");
         AuthenticateApp();
+        trace.TraceData(TraceEventType.Information, 0, "Geni.com authentication ok? " + appAuthentication.IsValid());
       }
       if (geniTreeSize == null)
       {
@@ -481,7 +482,11 @@ namespace FamilyTreeCodecGeni
 
       if (!authenticationTimer.Enabled)
       {
-        if (appAuthentication.GetExpiryTime() > DateTime.Now)
+        if (appAuthentication.TimeToReauthenticate())
+        {
+          authenticationTimer.Interval = 1;
+        }
+        else if (appAuthentication.GetExpiryTime() > DateTime.Now)
         {
           TimeSpan expireTime = appAuthentication.GetExpiryTime() - DateTime.Now;
           // Make timer expire a minute before time ends
@@ -650,7 +655,8 @@ namespace FamilyTreeCodecGeni
             if (resultClass == GeniWebResultType.FailedReauthenticationNeeded)
             {
               appAuthentication.ForceReauthentication();
-              CheckAuthentication();
+              StartAuthenticationTimer();
+              //CheckAuthentication();
             }
             else if (resultClass != GeniWebResultType.FailedRetrySimple)
             {
@@ -752,7 +758,8 @@ namespace FamilyTreeCodecGeni
       {
         trace.TraceData(TraceEventType.Warning, 0, "Geni authentication not valid..." + appAuthentication.ToString());
         appAuthentication.ForceReauthentication();
-        CheckAuthentication();
+        StartAuthenticationTimer();
+        //CheckAuthentication();
       }
     }
 
