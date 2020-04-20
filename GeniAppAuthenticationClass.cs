@@ -77,12 +77,17 @@ namespace FamilyTreeCodecGeni
       }
       return false;
     }
-    public void ForceReauthentication()
+    public bool ForceReauthentication()
     {
+      if (forceReauthentication)
+      {
+        return false;
+      }
       trace.TraceData(TraceEventType.Warning, 0, "SetInvalid: " + ToString());
       //expiresIn = 0;
       forceReauthentication = true;
       trace.TraceData(TraceEventType.Warning, 0, "SetInvalid-post: " + ToString());
+      return true;
     }
     public bool ForceReauthenticationOngoing()
     {

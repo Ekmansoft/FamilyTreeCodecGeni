@@ -629,6 +629,7 @@ namespace FamilyTreeCodecGeni
             if ((stats.GetIndividual.failureRetry++ > 0) || (resultClass != GeniWebResultType.FailedRetrySimple))
             {
               trace.TraceData(TraceEventType.Warning, 0, requestDescription + " WebException:" + retryCount + "/" + numberOfRetries + " " + httpResponseStatus + ": " + resultClass);
+              trace.TraceData(TraceEventType.Warning, 0, requestDescription + " appAuthentication:" + appAuthentication.ToString());
             }
             else
             {
@@ -654,8 +655,10 @@ namespace FamilyTreeCodecGeni
 
             if (resultClass == GeniWebResultType.FailedReauthenticationNeeded)
             {
-              appAuthentication.ForceReauthentication();
-              StartAuthenticationTimer();
+              if (appAuthentication.ForceReauthentication())
+              {
+                StartAuthenticationTimer();
+              }
               //CheckAuthentication();
             }
             else if (resultClass != GeniWebResultType.FailedRetrySimple)
@@ -757,8 +760,10 @@ namespace FamilyTreeCodecGeni
       if (!appAuthentication.IsValid() && !appAuthentication.ForceReauthenticationOngoing())
       {
         trace.TraceData(TraceEventType.Warning, 0, "Geni authentication not valid..." + appAuthentication.ToString());
-        appAuthentication.ForceReauthentication();
-        StartAuthenticationTimer();
+        if (appAuthentication.ForceReauthentication())
+        {
+          StartAuthenticationTimer();
+        }
         //CheckAuthentication();
       }
     }
