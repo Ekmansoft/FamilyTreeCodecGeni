@@ -327,7 +327,7 @@ namespace FamilyTreeCodecGeni
             {
               url = urls[0];
             }
-            trace.TraceData(TraceEventType.Warning, 0, "Warning, person has no relations! " + individual.GetXrefName() + " " + url + " " + individual.GetName());
+            trace.TraceData(TraceEventType.Information, 0, "Person has no relations! " + individual.GetXrefName() + " " + url + " " + individual.GetName());
           }
           CheckF2iReferences(ref individual);
         }
