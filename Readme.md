@@ -6,7 +6,7 @@
 - No good support for updating data in the world tree. This is still to be added.
 
 ### Dependencies
-- Dotnet Core 3.0
+- Dotnet Core 3.1
 - FamilyTreeLibrary https://github.com/endian02/FamilyTreeLibrary
 
 ### License 
