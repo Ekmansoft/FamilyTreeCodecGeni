@@ -1,11 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Company>Kenneth Ekman</Company>
+    <Authors>Kenneth Ekman</Authors>
+    <PackageLicenseFile>LICENSE-2.0.txt</PackageLicenseFile>
+    <NeutralLanguage>en</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/endian02/FamilyTreeCodecGeni</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Genealogy</PackageTags>
+    <PackageProjectUrl>https://github.com/users/endian02/projects/1</PackageProjectUrl>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FamilyTreeLibrary\FamilyTreeLibrary.csproj" />
+    <None Include="LICENSE-2.0.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
