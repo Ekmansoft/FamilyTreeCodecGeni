@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-using FamilyTreeLibrary.FamilyData;
-//using FamilyTreeLibrary.FamilyFileFormat;
+﻿//using FamilyTreeLibrary.FamilyFileFormat;
 using FamilyTreeLibrary.FamilyTreeStore;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace FamilyTreeCodecGeni
 {
@@ -79,6 +73,6 @@ namespace FamilyTreeCodecGeni
     public override string GetFileTypeWebName()
     {
       return "Geni.com";
-    }    
+    }
   }
 }

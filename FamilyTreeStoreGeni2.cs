@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FamilyTreeLibrary.FamilyData;
+using FamilyTreeLibrary.FamilyTreeStore;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading;
-using System.Web;
-using System.Text.Json;
-using FamilyTreeLibrary.FamilyData;
-using FamilyTreeLibrary.FamilyTreeStore;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.IO.Compression;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Web;
 //using FamilyStudioFormsGui.WindowsGui.FamilyWebBrowser;
 
 namespace FamilyTreeCodecGeni
@@ -600,7 +600,7 @@ namespace FamilyTreeCodecGeni
             if (returnLine == null)
             {
               failure = true;
-            } 
+            }
             else
             {
               webStats.successes++;
@@ -821,13 +821,13 @@ namespace FamilyTreeCodecGeni
           if (response == null)
           {
             trace.TraceData(TraceEventType.Information, 0, "response is null");
-          } 
+          }
           else
           {
             if (response.Headers != null)
             {
               IEnumerable<string> headers;
-              if(response.Headers.TryGetValues("Location", out headers))
+              if (response.Headers.TryGetValues("Location", out headers))
               //if (response.Headers.GetValues("Location") != null)
               {
                 IEnumerator resultStrings = headers.GetEnumerator();
@@ -835,14 +835,15 @@ namespace FamilyTreeCodecGeni
                 {
                   trace.TraceData(TraceEventType.Information, 0, "Headers: " + resultStrings.Current);
                 }
-              } 
+              }
               else
               {
                 trace.TraceData(TraceEventType.Information, 0, "Headers is null-2");
               }
-            } else
+            }
+            else
             {
-              trace.TraceData(TraceEventType.Information, 0, "Headers is null" );
+              trace.TraceData(TraceEventType.Information, 0, "Headers is null");
             }
           }
 
@@ -1023,7 +1024,7 @@ namespace FamilyTreeCodecGeni
           if (response.Headers["X-API-Rate-Window"] != null)
           {
             httpApiRateWindow = Convert.ToInt32(response.Headers["X-API-Rate-Window"]);
-          } 
+          }
           else
           {
             httpApiRateWindow = 0;
@@ -1082,7 +1083,7 @@ namespace FamilyTreeCodecGeni
     {
       GeniWebResultType result = GeniWebResultType.Ok;
 
-      switch(httpResponse)
+      switch (httpResponse)
       {
         case 401:
           result = GeniWebResultType.FailedReauthenticationNeeded;
@@ -1396,9 +1397,9 @@ namespace FamilyTreeCodecGeni
 
         if ((photoObject != null) && (photoObject.results != null))
         {
-          foreach(HttpPhotoResult photo in photoObject.results)
+          foreach (HttpPhotoResult photo in photoObject.results)
           {
-            if(photo.sizes != null)
+            if (photo.sizes != null)
             {
               DecodePhotos(ref person, photo.sizes);
             }
@@ -1783,7 +1784,7 @@ namespace FamilyTreeCodecGeni
           stats.GetIndividual.cacheSuccess++;
           IndividualClass person = cache.GetIndividual(xrefName);
 
-          if(person.GetXrefName() != xrefName)
+          if (person.GetXrefName() != xrefName)
           {
             trace.TraceData(TraceEventType.Error, 0, "Wrong person in cache!" + xrefName + " != " + person.GetXrefName());
           }
@@ -1823,7 +1824,7 @@ namespace FamilyTreeCodecGeni
           {
             getIndividualResult = JsonSerializer.Deserialize<HttpGetIndividualResult>(sLine);
           }
-          catch(JsonException ex)
+          catch (JsonException ex)
           {
             trace.TraceData(TraceEventType.Error, 0, "DeserializeObject<HttpGetIndividualResult> failed\n " + sLine + "\n " + ex.ToString());
           }
@@ -1911,7 +1912,7 @@ namespace FamilyTreeCodecGeni
                 }
               }
             }
-            if(!cache.CheckIndividual(xrefName))
+            if (!cache.CheckIndividual(xrefName))
             {
               if (getIndividualResult.focus != null)
               {
@@ -1981,7 +1982,7 @@ namespace FamilyTreeCodecGeni
 
         }
         return focusPerson;
-        
+
       }
       else
       {
@@ -2014,9 +2015,9 @@ namespace FamilyTreeCodecGeni
             stats.SearchIndividual.fetchSuccess++;
           }
 
-          foreach(IndividualClass person in personList)
+          foreach (IndividualClass person in personList)
           {
-            if(progressReporter != null)
+            if (progressReporter != null)
             {
               progressReporter.ReportProgress(100.0 * (double)index / (double)personList.Count, "Checking " + index + " / " + personList.Count);
             }
@@ -2175,7 +2176,7 @@ namespace FamilyTreeCodecGeni
             trace.TraceInformation("SearchFamily():add:" + familyIterator.Current);
             familyList.Add(familyIterator.Current);
           }
-          foreach(FamilyClass family in familyList)
+          foreach (FamilyClass family in familyList)
           {
             yield return family;
           }
@@ -2324,7 +2325,7 @@ namespace FamilyTreeCodecGeni
 
     public void SetFile(String fileName)
     {
-      trace.TraceInformation("SetFile("+fileName+"):");
+      trace.TraceInformation("SetFile(" + fileName + "):");
     }
 
   }

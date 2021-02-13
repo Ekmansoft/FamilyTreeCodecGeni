@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FamilyTreeLibrary.FamilyData;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Threading;
-using FamilyTreeLibrary.FamilyData;
 
 namespace FamilyTreeCodecGeni
 {

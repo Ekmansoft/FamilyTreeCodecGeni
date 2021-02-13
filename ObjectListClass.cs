@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Timers;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace FamilyTreeCodecGeni
 {
@@ -19,7 +16,7 @@ namespace FamilyTreeCodecGeni
 
   public class FamilyTimer : System.Timers.Timer
   {
-    
+
   }
 
   // This may vbe obsolete...
