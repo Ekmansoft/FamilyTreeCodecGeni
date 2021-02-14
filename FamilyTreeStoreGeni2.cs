@@ -40,7 +40,7 @@ namespace FamilyTreeCodecGeni
 
     private String sourceFileName;
     private const int GeniWebRequestTimeout = 60000;
-    private FamilyTimer authenticationTimer;
+    private System.Timers.Timer authenticationTimer;
     private GeniAccessStats stats;
     private string homePerson;
     private GeniAppAuthenticationClass appAuthentication;
@@ -454,7 +454,7 @@ namespace FamilyTreeCodecGeni
       stats = new GeniAccessStats();
 
       this.completedCallback = callback;
-      authenticationTimer = new FamilyTimer();// System.Windows.Forms.Timer();
+      authenticationTimer = new System.Timers.Timer();// System.Windows.Forms.Timer();
       authenticationTimer.Elapsed += AuthenticationTimer_Tick;
     }
 
