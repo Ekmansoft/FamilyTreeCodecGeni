@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <Company>Ekmansoft</Company>
     <Authors>Kenneth Ekman</Authors>
     <PackageLicenseFile>LICENSE-2.0.txt</PackageLicenseFile>
@@ -14,7 +14,7 @@
     <PackageProjectUrl>https://github.com/users/Ekmansoft/projects/1</PackageProjectUrl>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageId>Ekmansoft.FamilyTree.Codec.Geni</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
