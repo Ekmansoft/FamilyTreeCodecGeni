@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 //using FamilyStudioFormsGui.WindowsGui.FamilyWebBrowser;
 
@@ -549,31 +550,27 @@ namespace FamilyTreeCodecGeni
             sURL = secondaryURL;
           }
 
-          WebRequest webRequestGetUrl;
-          webRequestGetUrl = HttpWebRequest.Create(sURL);
-          webRequestGetUrl.Headers.Add("Authorization", String.Format("Bearer {0}", Uri.EscapeDataString(appAuthentication.GetAccessToken())));
-          webRequestGetUrl.Headers.Add("Accept-Encoding", "gzip,deflate");
-          webRequestGetUrl.Timeout = GeniWebRequestTimeout;
-          trace.TraceInformation(requestDescription + " = " + sURL + " " + DateTime.Now + " timeout " + webRequestGetUrl.Timeout);
+          trace.TraceInformation(requestDescription + " = " + sURL + " " + DateTime.Now + " timeout " + httpClient.Timeout);
 
-          HttpWebResponse response = (HttpWebResponse)webRequestGetUrl.GetResponse();
+          Task<HttpResponseMessage> responseTask = httpClient.GetAsync(sURL);
+          HttpResponseMessage response = responseTask.Result;
 
-          GeniWebResultType result = ClassifyWebResponse(response);
+          GeniWebResultType result = ClassifyHttpResponse(response);
           Stream stream = null;
 
-          switch (response.ContentEncoding.ToUpperInvariant())
-          {
-            case "GZIP":
-              stream = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress);
-              break;
-            case "DEFLATE":
-              stream = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress);
-              break;
+          ICollection<string> headers = response.Content.Headers.ContentEncoding;
 
-            default:
-              stream = response.GetResponseStream();
-              //stream.ReadTimeout = ;
-              break;
+          if (headers.Contains("gzip"))
+          {
+            stream = new GZipStream(response.Content.ReadAsStream(), CompressionMode.Decompress);
+          }
+          else if (headers.Contains("deflate"))
+          {
+            stream = new DeflateStream(response.Content.ReadAsStream(), CompressionMode.Decompress);
+          }
+          else
+          { 
+            stream = response.Content.ReadAsStream();
           }
           StreamReader objReader = new StreamReader(stream);
 
@@ -590,10 +587,10 @@ namespace FamilyTreeCodecGeni
 
             if (tooFastDelayTime > 0)
             {
-              trace.TraceData(TraceEventType.Information, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " +
+              trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " +
                webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " +
                httpApiRateRemaining + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
-              trace.TraceData(TraceEventType.Information, 0, "Headers " + response.Headers);
+              trace.TraceData(TraceEventType.Warning, 0, "Headers " + response.Headers);
               Thread.Sleep(tooFastDelayTime);
               webStats.tooFast++;
             }
@@ -1047,11 +1044,22 @@ namespace FamilyTreeCodecGeni
     {
       if (response != null)
       {
+        IEnumerator<string> rateLimit = response.Headers.GetValues("X-API-Rate-Limit").GetEnumerator();
+        if (rateLimit.MoveNext())
+        {
+          httpApiRateLimit = Convert.ToInt32(rateLimit.Current);
+        }
+        IEnumerator<string> rateWindow = response.Headers.GetValues("X-API-Rate-Window").GetEnumerator();
+        if (rateWindow.MoveNext())
+        {
+          httpApiRateWindow = Convert.ToInt32(rateWindow.Current);
+        }
+        rateWindow.Dispose();
         IEnumerator<string> rateRemaining = response.Headers.GetValues("X-API-Rate-Remaining").GetEnumerator();
         if (rateRemaining.MoveNext())
         {
-          httpApiRateLimit = Convert.ToInt32(rateRemaining.Current);
-          if (httpApiRateLimit < 10)
+          httpApiRateRemaining = Convert.ToInt32(rateRemaining.Current);
+          if (httpApiRateRemaining < 10)
           {
             rateRemaining.Dispose();
             return GeniWebResultType.OkTooFast;
