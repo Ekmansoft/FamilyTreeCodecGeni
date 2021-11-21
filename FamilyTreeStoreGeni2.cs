@@ -523,9 +523,9 @@ namespace FamilyTreeCodecGeni
       {
         tooFastDelayTime = 1000 * (httpApiRateLimit - httpApiRateRemaining);
       }
-      else if (httpApiRateRemaining < 8)
+      else if (httpApiRateRemaining < httpApiRateLimit)
       {
-        tooFastDelayTime = 100 + 200 * (httpApiRateLimit - httpApiRateRemaining);
+        tooFastDelayTime = 500 * (httpApiRateLimit - httpApiRateRemaining);
       }
       return tooFastDelayTime;
     }
