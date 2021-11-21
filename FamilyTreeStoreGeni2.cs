@@ -597,7 +597,7 @@ namespace FamilyTreeCodecGeni
               trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " +
                webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " +
                httpApiRateRemaining + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
-              trace.TraceData(TraceEventType.Warning, 0, "Headers " + response.Headers);
+              //trace.TraceData(TraceEventType.Warning, 0, "Headers " + response.Headers);
               Thread.Sleep(tooFastDelayTime);
               webStats.tooFast++;
             }
