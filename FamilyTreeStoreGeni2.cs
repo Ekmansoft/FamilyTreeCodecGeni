@@ -56,6 +56,7 @@ namespace FamilyTreeCodecGeni
     private int httpApiRateRemaining;
     private int httpApiRateLimit;
     private int httpApiRateWindow;
+    private List<int> httpApiRateWindowList;
     private WebStats webStats;
 
     public FamilyTreeCapabilityClass GetCapabilities()
@@ -596,7 +597,7 @@ namespace FamilyTreeCodecGeni
             {
               trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " +
                webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " +
-               httpApiRateRemaining + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
+               httpApiRateRemaining + "/" + getAverageRateRemaining() + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
               //trace.TraceData(TraceEventType.Warning, 0, "Headers " + response.Headers);
               Thread.Sleep(tooFastDelayTime);
               webStats.tooFast++;
@@ -1048,6 +1049,20 @@ namespace FamilyTreeCodecGeni
       return GeniWebResultType.Ok;
     }
 
+    private int getAverageRateRemaining()
+    {
+      if ((httpApiRateWindowList != null) && (httpApiRateWindowList.Count > 0))
+      {
+        int sum = 0;
+        foreach (int v in httpApiRateWindowList)
+        {
+          sum += v;
+        }
+        return sum / httpApiRateWindowList.Count;
+      }
+      return 0;
+    }
+
     private GeniWebResultType ClassifyHttpResponse(HttpResponseMessage response)
     {
       if (response != null)
@@ -1057,6 +1072,7 @@ namespace FamilyTreeCodecGeni
         {
           httpApiRateLimit = Convert.ToInt32(rateLimit.Current);
         }
+        rateLimit.Dispose();
         IEnumerator<string> rateWindow = response.Headers.GetValues("X-API-Rate-Window").GetEnumerator();
         if (rateWindow.MoveNext())
         {
@@ -1067,7 +1083,19 @@ namespace FamilyTreeCodecGeni
         if (rateRemaining.MoveNext())
         {
           httpApiRateRemaining = Convert.ToInt32(rateRemaining.Current);
-          if (httpApiRateRemaining < 10)
+          if (httpApiRateWindow > 0)
+          {
+            if (httpApiRateWindowList == null)
+            {
+              httpApiRateWindowList = new List<int>();
+            }
+            httpApiRateWindowList.Insert(0, httpApiRateRemaining);
+            if (httpApiRateWindowList.Count >= httpApiRateWindow)
+            {
+              httpApiRateWindowList.RemoveAt(httpApiRateWindow);
+            }
+          }
+          if (httpApiRateRemaining < httpApiRateLimit)
           {
             rateRemaining.Dispose();
             return GeniWebResultType.OkTooFast;
