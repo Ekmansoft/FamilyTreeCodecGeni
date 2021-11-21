@@ -454,6 +454,8 @@ namespace FamilyTreeCodecGeni
 
       stats = new GeniAccessStats();
 
+      CheckGeniAuthentication();
+
       this.completedCallback = callback;
       authenticationTimer = new System.Timers.Timer();// System.Windows.Forms.Timer();
       authenticationTimer.Elapsed += AuthenticationTimer_Tick;
