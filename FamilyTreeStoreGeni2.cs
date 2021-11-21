@@ -519,14 +519,19 @@ namespace FamilyTreeCodecGeni
     {
       int tooFastDelayTime = 0;
 
-      if (httpApiRateRemaining < 3)
+      if ((httpApiRateLimit > 0) && (httpApiRateWindow > 0))
       {
-        tooFastDelayTime = 1000 * (httpApiRateLimit - httpApiRateRemaining);
+        tooFastDelayTime = 1000 * httpApiRateWindow / httpApiRateLimit;
       }
-      else if (httpApiRateRemaining < httpApiRateLimit)
-      {
-        tooFastDelayTime = 500 * (httpApiRateLimit - httpApiRateRemaining);
-      }
+
+      //if (httpApiRateRemaining < 3)
+      //{
+      //  tooFastDelayTime = 1000 * (httpApiRateLimit - httpApiRateRemaining);
+      //}
+      //else if (httpApiRateRemaining < httpApiRateLimit)
+      //{
+      //  tooFastDelayTime = 500 * (httpApiRateLimit - httpApiRateRemaining);
+      //}
       return tooFastDelayTime;
     }
 
