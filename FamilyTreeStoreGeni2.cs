@@ -773,6 +773,7 @@ namespace FamilyTreeCodecGeni
     }
     private string GetWebData(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
     {
+      CheckHeaderInit();
       switch (httpRequestType)
       {
         case 1:
