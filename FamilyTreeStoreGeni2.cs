@@ -963,15 +963,30 @@ namespace FamilyTreeCodecGeni
 
       if (sLine != null)
       {
-        HttpMaxFamilyResponse maxFamilyResponse = JsonSerializer.Deserialize<HttpMaxFamilyResponse>(sLine);
-
-        foreach (HttpPerson person in maxFamilyResponse.results)
+        HttpMaxFamilyResponse maxFamilyResponse = null;
+        try
         {
-          if (person.id != null)
+          maxFamilyResponse = JsonSerializer.Deserialize<HttpMaxFamilyResponse>(sLine);
+        }
+        catch (Exception ex)
+        {
+          trace.TraceInformation("FetchRootPerson() json decoding failed = " + sLine + " " + ex.ToString());
+        }
+
+        if (maxFamilyResponse != null)
+        { 
+          foreach (HttpPerson person in maxFamilyResponse.results)
           {
-            trace.TraceInformation("FetchRootPerson() = " + person.id + " " + (DateTime.Now - startTime) + "s");
-            return person.id;
+            if (person.id != null)
+            {
+              trace.TraceInformation("FetchRootPerson() = " + person.id + " " + (DateTime.Now - startTime) + "s");
+              return person.id;
+            }
           }
+        }
+        else 
+        {
+          trace.TraceInformation("FetchRootPerson() =  " + sLine  + " which failed decoding " + (DateTime.Now - startTime) + "s");
         }
       }
       else
@@ -1090,7 +1105,7 @@ namespace FamilyTreeCodecGeni
               httpApiRateWindowList = new List<int>();
             }
             httpApiRateWindowList.Insert(0, httpApiRateRemaining);
-            if (httpApiRateWindowList.Count >= httpApiRateWindow)
+            while (httpApiRateWindowList.Count > httpApiRateWindow)
             {
               httpApiRateWindowList.RemoveAt(httpApiRateWindow);
             }
