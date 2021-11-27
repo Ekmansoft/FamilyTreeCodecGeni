@@ -294,9 +294,13 @@ namespace FamilyTreeCodecGeni
 
     public void AddIndividual(IndividualClass individual)
     {
-      if (individual.GetXrefName().Length == 0)
+      if (individual == null)
       {
-        trace.TraceEvent(TraceEventType.Error, 0, "AddIndividual():error: no xref!");
+        trace.TraceData(TraceEventType.Error, 0, "GeniCache: Trying to add individual == null");
+      }
+      else if (individual.GetXrefName().Length == 0)
+      {
+        trace.TraceEvent(TraceEventType.Error, 0, "GeniCache:AddIndividual():error: no xref!");
       }
       else
       {

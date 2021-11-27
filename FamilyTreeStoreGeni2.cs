@@ -58,6 +58,8 @@ namespace FamilyTreeCodecGeni
     private int httpApiRateWindow;
     private List<int> httpApiRateWindowList;
     private WebStats webStats;
+    private DateTime latestRequestTime;
+    private List<int> requestIntervals;
 
     public FamilyTreeCapabilityClass GetCapabilities()
     {
@@ -457,6 +459,8 @@ namespace FamilyTreeCodecGeni
 
       CheckGeniAuthentication();
 
+      requestIntervals = new List<int>();
+
       this.completedCallback = callback;
       authenticationTimer = new System.Timers.Timer();// System.Windows.Forms.Timer();
       authenticationTimer.Elapsed += AuthenticationTimer_Tick;
@@ -536,6 +540,16 @@ namespace FamilyTreeCodecGeni
       return tooFastDelayTime;
     }
 
+    int getAverageInterval()
+    {
+      int sum = 0;
+      foreach(int v in requestIntervals)
+      {
+        sum += v;
+      }
+      return sum / requestIntervals.Count;
+    }
+
     private string GetWebData1(string mainURL, string secondaryURL, string requestDescription, int numberOfRetries)
     {
       string returnLine = null;
@@ -557,9 +571,23 @@ namespace FamilyTreeCodecGeni
           {
             sURL = secondaryURL;
           }
-          DateTime latestRequestTime = DateTime.Now;
 
-          trace.TraceInformation(requestDescription + " = " + sURL + " " + DateTime.Now + " timeout " + httpClient.Timeout);
+
+          DateTime timeNow = DateTime.Now;
+          int latestRequestInterval = (timeNow - latestRequestTime).Milliseconds;
+          requestIntervals.Insert(0, latestRequestInterval);
+          int listLen = 10;
+          if (httpApiRateWindow > 0)
+          {
+            listLen = httpApiRateWindow;
+          }
+          while (requestIntervals.Count > listLen)
+          {
+            requestIntervals.RemoveAt(listLen);
+          }
+          latestRequestTime = timeNow;
+
+          trace.TraceInformation(requestDescription + " = " + sURL + " " + latestRequestTime + " timeout " + httpClient.Timeout);
 
           Task<HttpResponseMessage> responseTask = httpClient.GetAsync(sURL);
           HttpResponseMessage response = responseTask.Result;
@@ -599,7 +627,8 @@ namespace FamilyTreeCodecGeni
 
             if (tooFastDelayTime > 0)
             {
-              trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + latestResponseTime.Milliseconds + "ms " +
+              trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + 
+                latestResponseTime.Milliseconds + "ms interval:" + getAverageInterval() + "ms " + 
                webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " +
                httpApiRateRemaining + "/" + getAverageRateRemaining() + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
               //trace.TraceData(TraceEventType.Warning, 0, "Headers " + response.Headers);
