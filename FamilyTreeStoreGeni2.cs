@@ -557,6 +557,7 @@ namespace FamilyTreeCodecGeni
           {
             sURL = secondaryURL;
           }
+          DateTime latestRequestTime = DateTime.Now;
 
           trace.TraceInformation(requestDescription + " = " + sURL + " " + DateTime.Now + " timeout " + httpClient.Timeout);
 
@@ -592,10 +593,13 @@ namespace FamilyTreeCodecGeni
           else if (result == GeniWebResultType.OkTooFast)
           {
             int tooFastDelayTime = GetNextDelayTimeAtRateLimit();
+            TimeSpan latestResponseTime = (DateTime.Now - latestRequestTime);
+            tooFastDelayTime -= latestResponseTime.Milliseconds;
+
 
             if (tooFastDelayTime > 0)
             {
-              trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " +
+              trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + latestResponseTime.Milliseconds + "ms " +
                webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " +
                httpApiRateRemaining + "/" + getAverageRateRemaining() + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
               //trace.TraceData(TraceEventType.Warning, 0, "Headers " + response.Headers);
