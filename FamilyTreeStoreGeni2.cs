@@ -576,7 +576,7 @@ namespace FamilyTreeCodecGeni
 
           DateTime timeNow = DateTime.Now;
           TimeSpan interval = (timeNow - latestRequestTime);
-          int latestRequestInterval = interval.Milliseconds;
+          int latestRequestInterval = ((int)interval.TotalMilliseconds);
           trace.TraceEvent(TraceEventType.Warning, 0, "interval:" + latestRequestInterval + " " + interval.ToString());
           requestIntervals.Insert(0, latestRequestInterval);
           int listLen = 10;
