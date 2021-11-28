@@ -1,10 +1,10 @@
-﻿//using FamilyTreeLibrary.FamilyFileFormat;
-using FamilyTreeLibrary.FamilyTreeStore;
+﻿//using Ekmansoft.FamilyTree.Library.FamilyFileFormat;
+using Ekmansoft.FamilyTree.Library.FamilyTreeStore;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace FamilyTreeCodecGeni
+namespace Ekmansoft.FamilyTree.Codec.Geni
 {
   public class GeniFileType : FamilyFileTypeBaseClass
   {

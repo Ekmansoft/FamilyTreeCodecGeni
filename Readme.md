@@ -1,4 +1,4 @@
-### FamilyTreeCodecGeni
+### Ekmansoft.FamilyTree.Codec.Geni
 - Dotnet Core https://www.geni.com/platform/developer/help codec written in C# for managing genealogy family trees
 
 ### Description
@@ -7,7 +7,7 @@
 
 ### Dependencies
 - Dotnet Core 6.0
-- FamilyTreeLibrary https://github.com/Ekmansoft/FamilyTreeLibrary
+- Ekmansoft.FamilyTree.Library https://github.com/Ekmansoft/FamilyTreeLibrary
 
 ### License 
 - Apache 2.0

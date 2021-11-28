@@ -1,5 +1,5 @@
-﻿using FamilyTreeLibrary.FamilyData;
-using FamilyTreeLibrary.FamilyTreeStore;
+﻿using Ekmansoft.FamilyTree.Library.FamilyData;
+using Ekmansoft.FamilyTree.Library.FamilyTreeStore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 using System.Web;
 //using FamilyStudioFormsGui.WindowsGui.FamilyWebBrowser;
 
-namespace FamilyTreeCodecGeni
+namespace Ekmansoft.FamilyTree.Codec.Geni
 {
   [DataContract]
 
@@ -631,9 +631,10 @@ namespace FamilyTreeCodecGeni
             if (tooFastDelayTime > 0)
             {
               trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + 
-                latestResponseTime.Milliseconds + "ms interval:" + getAverageInterval() + "ms " + 
-               webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + " " +
-               httpApiRateRemaining + "/" + getAverageRateRemaining() + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
+                (int)latestResponseTime.TotalMilliseconds + "ms avg-interval:" + getAverageInterval() + "ms " + 
+               webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + 
+               " avg-remaining:(" + getAverageRateRemaining() + ") " +
+               httpApiRateRemaining + "/" + httpApiRateLimit + "/" + httpApiRateWindow);
               //trace.TraceData(TraceEventType.Warning, 0, "Headers " + response.Headers);
               Thread.Sleep(tooFastDelayTime);
               webStats.tooFast++;

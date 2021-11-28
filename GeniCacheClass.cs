@@ -1,11 +1,11 @@
-﻿using FamilyTreeLibrary.FamilyData;
+﻿using Ekmansoft.FamilyTree.Library.FamilyData;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Threading;
 
-namespace FamilyTreeCodecGeni
+namespace Ekmansoft.FamilyTree.Codec.Geni
 {
   [DataContract]
   public class GeniCache

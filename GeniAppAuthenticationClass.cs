@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-//using FamilyTreeWebTools.Services;
+//using Ekmansoft.FamilyTree.WebTools.Services;
 
-namespace FamilyTreeCodecGeni
+namespace Ekmansoft.FamilyTree.Codec.Geni
 {
   public delegate void GeniAuthenticationUpdateCb(string accessToken, string refreshToken, int expiresIn);
   public class GeniAppAuthenticationClass
