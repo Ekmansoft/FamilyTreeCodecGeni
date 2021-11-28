@@ -464,6 +464,7 @@ namespace FamilyTreeCodecGeni
       this.completedCallback = callback;
       authenticationTimer = new System.Timers.Timer();// System.Windows.Forms.Timer();
       authenticationTimer.Elapsed += AuthenticationTimer_Tick;
+      latestRequestTime = DateTime.Now;
     }
 
     private bool AuthenticationTimerIsRunning()
@@ -575,6 +576,7 @@ namespace FamilyTreeCodecGeni
 
           DateTime timeNow = DateTime.Now;
           int latestRequestInterval = (timeNow - latestRequestTime).Milliseconds;
+          trace.TraceEvent(TraceEventType.Warning, 0, "interval:" + latestRequestInterval);
           requestIntervals.Insert(0, latestRequestInterval);
           int listLen = 10;
           if (httpApiRateWindow > 0)
