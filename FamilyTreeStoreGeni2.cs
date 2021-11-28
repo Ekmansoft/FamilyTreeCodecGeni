@@ -625,7 +625,7 @@ namespace FamilyTreeCodecGeni
           {
             int tooFastDelayTime = GetNextDelayTimeAtRateLimit();
             TimeSpan latestResponseTime = (DateTime.Now - latestRequestTime);
-            tooFastDelayTime -= latestResponseTime.Milliseconds;
+            tooFastDelayTime -= (int)latestResponseTime.TotalMilliseconds;
 
 
             if (tooFastDelayTime > 0)
