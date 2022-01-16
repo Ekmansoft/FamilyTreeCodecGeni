@@ -191,6 +191,19 @@ namespace Ekmansoft.FamilyTree.Codec.Geni
      * request: https://www.geni.com/api/profile-<id>/photos
      */
 
+    public class HttpError
+    {
+      public string type { get; set; }
+      public string message{ get; set; }
+    }
+
+
+    public class HttpErrorResult
+    {
+      public HttpError error { get; set; }
+    }
+
+
     public class HttpPhotoSizes
     {
       public string large { get; set; }
@@ -577,7 +590,7 @@ namespace Ekmansoft.FamilyTree.Codec.Geni
           DateTime timeNow = DateTime.Now;
           TimeSpan interval = (timeNow - latestRequestTime);
           int latestRequestInterval = ((int)interval.TotalMilliseconds);
-          trace.TraceEvent(TraceEventType.Warning, 0, "interval:" + latestRequestInterval + " " + interval.ToString());
+          //trace.TraceEvent(TraceEventType.Warning, 0, "interval:" + latestRequestInterval + " " + interval.ToString());
           requestIntervals.Insert(0, latestRequestInterval);
           int listLen = 10;
           if (httpApiRateWindow > 0)
@@ -617,6 +630,45 @@ namespace Ekmansoft.FamilyTree.Codec.Geni
           returnLine = objReader.ReadToEnd();
           stream.Close();
 
+          if ((returnLine.Length > 10) && (returnLine.Length < 100)){
+            HttpErrorResult errorResult = null;
+            trace.TraceInformation("GetWebData2() checking short data = " + returnLine + " " + resultClass);
+            try
+            {
+              errorResult = JsonSerializer.Deserialize<HttpErrorResult>(returnLine);
+            }
+            catch (Exception ex)
+            {
+              trace.TraceInformation("GetWebData2() json decoding failed = " + returnLine + " " + ex.ToString());
+            }
+            if (errorResult != null)
+            {
+              if (errorResult.error != null)
+              {
+                trace.TraceInformation("GetWebData2() json decoding = " + returnLine);
+
+                if (errorResult.error.type.StartsWith("ApiException"))
+                {
+                  if (errorResult.error.message.StartsWith("Rate limit exceeded"))
+                  {
+                    resultClass = GeniWebResultType.OkTooFast;
+                    returnLine = null;
+                  }
+                }
+                if (errorResult.error.type.StartsWith("OAuthException"))
+                {
+                  if (errorResult.error.message.StartsWith("Invalid access token"))
+                  {
+                    resultClass = GeniWebResultType.FailedReauthenticationNeeded;
+                    returnLine = null;
+                  }
+                }
+              }
+
+            }
+          }
+
+
           if (result == GeniWebResultType.Ok)
           {
             webStats.successes++;
@@ -630,7 +682,7 @@ namespace Ekmansoft.FamilyTree.Codec.Geni
 
             if (tooFastDelayTime > 0)
             {
-              trace.TraceData(TraceEventType.Warning, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + 
+              trace.TraceData(TraceEventType.Information, 0, "Running too fast...Breaking " + tooFastDelayTime + "ms! " + 
                 (int)latestResponseTime.TotalMilliseconds + "ms avg-interval:" + getAverageInterval() + "ms " + 
                webStats.requests + "/" + webStats.successes + "/" + webStats.tooFast + 
                " avg-remaining:(" + getAverageRateRemaining() + ") " +
@@ -1119,40 +1171,43 @@ namespace Ekmansoft.FamilyTree.Codec.Geni
     {
       if (response != null)
       {
-        IEnumerator<string> rateLimit = response.Headers.GetValues("X-API-Rate-Limit").GetEnumerator();
-        if (rateLimit.MoveNext())
+        if (response.Headers.Contains("X-API-Rate-Limit"))
         {
-          httpApiRateLimit = Convert.ToInt32(rateLimit.Current);
-        }
-        rateLimit.Dispose();
-        IEnumerator<string> rateWindow = response.Headers.GetValues("X-API-Rate-Window").GetEnumerator();
-        if (rateWindow.MoveNext())
-        {
-          httpApiRateWindow = Convert.ToInt32(rateWindow.Current);
-        }
-        rateWindow.Dispose();
-        IEnumerator<string> rateRemaining = response.Headers.GetValues("X-API-Rate-Remaining").GetEnumerator();
-        if (rateRemaining.MoveNext())
-        {
-          httpApiRateRemaining = Convert.ToInt32(rateRemaining.Current);
-          if (httpApiRateWindow > 0)
+          IEnumerator<string> rateLimit = response.Headers.GetValues("X-API-Rate-Limit").GetEnumerator();
+          if (rateLimit.MoveNext())
           {
-            if (httpApiRateWindowList == null)
-            {
-              httpApiRateWindowList = new List<int>();
-            }
-            httpApiRateWindowList.Insert(0, httpApiRateRemaining);
-            while (httpApiRateWindowList.Count > httpApiRateWindow)
-            {
-              httpApiRateWindowList.RemoveAt(httpApiRateWindow);
-            }
+            httpApiRateLimit = Convert.ToInt32(rateLimit.Current);
           }
-          if (httpApiRateRemaining < httpApiRateLimit)
+          rateLimit.Dispose();
+          IEnumerator<string> rateWindow = response.Headers.GetValues("X-API-Rate-Window").GetEnumerator();
+          if (rateWindow.MoveNext())
           {
+            httpApiRateWindow = Convert.ToInt32(rateWindow.Current);
+          }
+          rateWindow.Dispose();
+          IEnumerator<string> rateRemaining = response.Headers.GetValues("X-API-Rate-Remaining").GetEnumerator();
+          if (rateRemaining.MoveNext())
+          {
+            httpApiRateRemaining = Convert.ToInt32(rateRemaining.Current);
+            if (httpApiRateWindow > 0)
+            {
+              if (httpApiRateWindowList == null)
+              {
+                httpApiRateWindowList = new List<int>();
+              }
+              httpApiRateWindowList.Insert(0, httpApiRateRemaining);
+              while (httpApiRateWindowList.Count > httpApiRateWindow)
+              {
+                httpApiRateWindowList.RemoveAt(httpApiRateWindow);
+              }
+            }
+            if (httpApiRateRemaining < httpApiRateLimit)
+            {
+              rateRemaining.Dispose();
+              return GeniWebResultType.OkTooFast;
+            }
             rateRemaining.Dispose();
-            return GeniWebResultType.OkTooFast;
           }
-          rateRemaining.Dispose();
         }
       }
       return GeniWebResultType.Ok;
@@ -1893,6 +1948,12 @@ namespace Ekmansoft.FamilyTree.Codec.Geni
       {
         xrefName = FetchRootPerson();
         trace.TraceInformation("GetIndividual(null==root) :" + xrefName);
+      }
+
+      if ((xrefName == null) || (xrefName.Length == 0))
+      {
+        trace.TraceData(TraceEventType.Warning, 0, "GetIndividual(null==root) null");
+        return null;
       }
 
       string sLine;
