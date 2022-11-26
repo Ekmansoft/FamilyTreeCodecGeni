@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Company>Ekmansoft</Company>
     <Authors>Kenneth Ekman</Authors>
     <PackageLicenseFile>LICENSE-2.0.txt</PackageLicenseFile>
@@ -15,11 +15,11 @@
     <NeutralLanguage>en</NeutralLanguage>
     <PackageId>Ekmansoft.FamilyTree.Codec.Geni</PackageId>
     <AssemblyName>Ekmansoft.FamilyTree.Codec.Geni</AssemblyName>
-    <Version>1.3.1</Version>
+    <Version>1.4.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ekmansoft.FamilyTree.Library" Version="1.3.0" />
+    <PackageReference Include="Ekmansoft.FamilyTree.Library" Version="1.4.0" />
     <None Include="LICENSE-2.0.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
