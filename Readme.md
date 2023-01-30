@@ -6,7 +6,7 @@
 - No good support for updating data in the world tree. This is still to be added.
 
 ### Dependencies
-- Dotnet Core 6.0
+- Dotnet 7.0
 - Ekmansoft.FamilyTree.Library https://github.com/Ekmansoft/FamilyTreeLibrary
 
 ### License 
